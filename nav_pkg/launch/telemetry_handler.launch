@@ -1,0 +1,21 @@
+<launch>
+
+  <arg name="rosbot_pro" default="false" />
+  <arg name="use_gazebo" default="false" />
+
+  <group unless="$(arg use_gazebo)">
+    <include file="$(find rosbot_ekf)/launch/all.launch">
+      <arg name="rosbot_pro" value="$(arg rosbot_pro)" />
+    </include>
+  </group>
+
+  <include unless="$(arg use_gazebo)" file="$(find astra_launch)/launch/astra.launch"/>
+  <include if="$(arg use_gazebo)" file="$(find rosbot_description)/launch/rosbot.launch"/>
+
+  <node pkg="image_view" type="image_view" name="image_view">
+	<remap from="/image" to="/camera/rgb/image_raw"/>  
+  </node>
+
+  <node pkg="tutorial_pkg" type="telemetry_handler_node" name="telemetry_handler" output="screen"/>
+
+</launch>
